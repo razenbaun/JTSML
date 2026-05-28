@@ -31,7 +31,7 @@ public class LinearTrendModel implements TimeSeriesModel, Serializable {
     public List<Double> predict(int horizon) {
         List<Double> forecast = new ArrayList<>();
         for (int i = 1; i <= horizon; i++) {
-            forecast.add(intercept + slope * (n + i));
+            forecast.add(intercept + slope * (n + i - 1));
         }
         return forecast;
     }

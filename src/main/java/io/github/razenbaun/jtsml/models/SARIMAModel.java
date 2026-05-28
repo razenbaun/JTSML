@@ -67,7 +67,7 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
             throw new RuntimeException("Not enough observations after lags");
 
         ARMAXOptimizer optimizer = new ARMAXOptimizer(y, new double[y.length][0],
-                arLags, maLags, 400_000);
+                arLags, maLags, 800_000);
         optimizer.optimize();
         arCoeffs = optimizer.getArCoeffs();
         maCoeffs = optimizer.getMaCoeffs();

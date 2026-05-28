@@ -55,7 +55,6 @@ public class CorrelogramChart {
         renderer.setSeriesPaint(1, Color.RED);
         renderer.setShadowVisible(false);
 
-        // Линии значимости ±1.96/√n можно добавить позже
         return chart;
     }
 }

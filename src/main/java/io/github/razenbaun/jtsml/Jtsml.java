@@ -2,8 +2,6 @@ package io.github.razenbaun.jtsml;
 
 import io.github.razenbaun.jtsml.core.TimeSeriesModel;
 import io.github.razenbaun.jtsml.models.*;
-import io.github.razenbaun.jtsml.adapters.ProphetAdapter;
-import io.github.razenbaun.jtsml.adapters.ProphetAdapterWithDates;
 import io.github.razenbaun.jtsml.visualization.TimeSeriesChart;
 import io.github.razenbaun.jtsml.visualization.TimeSeriesChart.Pair;
 
@@ -16,23 +14,16 @@ public class Jtsml {
 
     public static class Builder {
         private List<Double> data;
-        private List<String> dates;
         private int horizon = 30;
         private List<TimeSeriesModel> models = new ArrayList<>();
         private boolean showChart = false;
         private String chartTitle = "Прогноз временного ряда";
         private boolean autoArimaRequested = false;
-        private final Map<TimeSeriesModel, List<String>> modelsWithDates = new LinkedHashMap<>();
         private boolean autoSarimaRequested = false;
         private int seasonalPeriodForAutoSarima = 7;
 
         public Builder data(List<Double> data) {
             this.data = data;
-            return this;
-        }
-
-        public Builder dates(List<String> dates) {
-            this.dates = dates;
             return this;
         }
 
@@ -43,12 +34,6 @@ public class Jtsml {
 
         public Builder model(TimeSeriesModel model) {
             this.models.add(model);
-            return this;
-        }
-
-        public Builder modelWithDates(TimeSeriesModel model, List<String> dates) {
-            this.modelsWithDates.put(model, dates);
-            this.models.add(model); // тоже добавим в общий список для обработки
             return this;
         }
 
@@ -63,9 +48,11 @@ public class Jtsml {
                 switch (name.toLowerCase()) {
                     case "naive":
                         models.add(new NaiveModel()); break;
-                    case "exp": case "brown":
+                    case "exp":
+                    case "brown":
                         models.add(new ExponentialSmoothingModel()); break;
-                    case "linear": case "trend":
+                    case "linear":
+                    case "trend":
                         models.add(new LinearTrendModel()); break;
                     case "arima":
                         models.add(new ArimaModel()); break;
@@ -138,32 +125,12 @@ public class Jtsml {
             List<Double> trainValues = data.subList(0, trainSize);
             List<Double> testValues = data.subList(trainSize, data.size());
 
-            List<String> trainDates = null;
-            if (dates != null && dates.size() == data.size()) {
-                trainDates = dates.subList(0, trainSize);
-            }
-
             Map<String, List<Double>> allForecasts = new LinkedHashMap<>();
             Map<String, Double> errors = new HashMap<>();
 
             for (TimeSeriesModel model : models) {
                 try {
-                    // Обучение с датами или без
-                    if (modelsWithDates.containsKey(model)) {
-                        // Эта модель должна обучаться с датами
-                        if (model instanceof ProphetAdapterWithDates) {
-                            ProphetAdapterWithDates pw = (ProphetAdapterWithDates) model;
-                            List<String> fullDates = modelsWithDates.get(model);
-                            // передаём только train-часть дат
-                            List<String> trainD = fullDates.subList(0, trainSize);
-                            pw.fit(trainValues, trainD);
-                        } else {
-                            throw new RuntimeException("modelWithDates not supported for " + model.getName());
-                        }
-                    } else {
-                        model.fit(trainValues);
-                    }
-
+                    model.fit(trainValues);
                     List<Double> forecast = model.predict(horizon);
                     allForecasts.put(model.getName(), forecast);
 
@@ -227,15 +194,24 @@ public class Jtsml {
             this.allErrors = allErrors;
         }
 
-        public Map<String, Double> getAllErrors() { return allErrors; }
-
+        public Map<String, Double> getAllErrors() {
+            return allErrors;
+        }
 
         public List<Double> getPrediction(String modelName) {
             return predictions.get(modelName);
         }
 
-        public Map<String, List<Double>> getAllPredictions() { return predictions; }
-        public String getBestModel() { return bestModel; }
-        public double getBestError() { return bestError; }
+        public Map<String, List<Double>> getAllPredictions() {
+            return predictions;
+        }
+
+        public String getBestModel() {
+            return bestModel;
+        }
+
+        public double getBestError() {
+            return bestError;
+        }
     }
 }

@@ -15,6 +15,7 @@ public class ArimaModel implements TimeSeriesModel, Serializable {
     private List<Double> lastDiffObs;
     private List<Double> originalTail;
     private int nobs;
+    private boolean fitted = false;
 
     public ArimaModel() { this(0, 1, 1); }
 
@@ -24,6 +25,7 @@ public class ArimaModel implements TimeSeriesModel, Serializable {
 
     @Override
     public void fit(List<Double> trainData) {
+        fitted = true;
         List<Double> diff = new ArrayList<>(trainData);
         for (int i = 0; i < d; i++) {
             List<Double> tmp = new ArrayList<>();
@@ -48,6 +50,7 @@ public class ArimaModel implements TimeSeriesModel, Serializable {
 
     @Override
     public List<Double> predict(int horizon) {
+        if (!fitted) throw new IllegalStateException("Model not fitted");
         List<Double> diffForecast = new ArrayList<>();
         LinkedList<Double> workDiff = new LinkedList<>(lastDiffObs);
         LinkedList<Double> workErrors = new LinkedList<>(lastErrors);
