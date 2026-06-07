@@ -4,47 +4,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Генератор признаков для временного ряда.
- * Поддерживает:
- * - лаги (1,2,3,...)
- * - скользящее среднее
- * - временной индекс
+ * Feature generator for time series.
+ * Supports:
+ * - lags (1,2,3,...)
+ * - rolling mean
+ * - time index
  */
 public class FeatureEngineer {
 
     /**
-     * Создаёт матрицу признаков на основе исходного ряда.
-     * @param series исходный ряд (значения)
-     * @param lags список лагов для включения (например, [1,2,3])
-     * @param rollingWindow окно для скользящего среднего (0 – не использовать)
-     * @param includeTimeIndex добавить индекс времени как признак
-     * @return FeatureSet, где каждая строка – наблюдение, признаки – лаги, скользящее среднее, индекс
+     * Creates a feature matrix from the original series.
+     * @param series the original time series values
+     * @param lags list of lags to include (e.g., [1,2,3])
+     * @param rollingWindow window size for rolling mean (0 = do not use)
+     * @param includeTimeIndex whether to add time index as a feature
+     * @return FeatureSet where each row is an observation, features are lags, rolling mean, and time index
      */
     public static FeatureSet createFeatures(List<Double> series,
                                             List<Integer> lags,
                                             int rollingWindow,
                                             boolean includeTimeIndex) {
         int n = series.size();
-        // Определяем количество признаков
+        // Determine number of features
         int numFeatures = lags.size() + (rollingWindow > 0 ? 1 : 0) + (includeTimeIndex ? 1 : 0);
         List<double[]> featureRows = new ArrayList<>();
         List<Double> targetRows = new ArrayList<>();
 
-        // Для каждого индекса, начиная с максимального лага (чтобы были все лаги)
+        // Start from the maximum lag to ensure all lag values are available
         int startIdx = lags.stream().max(Integer::compare).orElse(0);
         if (rollingWindow > 0 && rollingWindow > startIdx) startIdx = rollingWindow;
-        if (startIdx == 0) startIdx = 1; // хотя бы для индекса времени
+        if (startIdx == 0) startIdx = 1; // at least for time index
 
         for (int t = startIdx; t < n; t++) {
             double[] row = new double[numFeatures];
             int col = 0;
 
-            // Лаги
+            // Lags
             for (int lag : lags) {
                 row[col++] = series.get(t - lag);
             }
 
-            // Скользящее среднее
+            // Rolling mean
             if (rollingWindow > 0) {
                 double sum = 0;
                 for (int i = t - rollingWindow; i < t; i++) {
@@ -53,7 +53,7 @@ public class FeatureEngineer {
                 row[col++] = sum / rollingWindow;
             }
 
-            // Индекс времени
+            // Time index
             if (includeTimeIndex) {
                 row[col++] = t;
             }

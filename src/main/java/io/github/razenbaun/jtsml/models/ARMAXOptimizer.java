@@ -59,7 +59,7 @@ class ARMAXOptimizer {
             throw new RuntimeException("Not enough observations after lags");
         }
 
-        // Начальное приближение AR (МНК без MA)
+        // Initial AR approximation (OLS without MA)
         RealMatrix X = new Array2DRowRealMatrix(n - maxLag, 1 + p + numExog);
         RealVector Yvec = new ArrayRealVector(n - maxLag);
         for (int t = maxLag; t < n; t++) {
@@ -122,7 +122,6 @@ class ARMAXOptimizer {
             return sumSq;
         };
 
-        // Только Nelder-Mead
         NelderMeadSimplex simplex = new NelderMeadSimplex(paramCount);
         SimplexOptimizer optimizer = new SimplexOptimizer(1e-12, 1e-12);
         PointValuePair result = optimizer.optimize(

@@ -86,7 +86,6 @@ public class Jtsml {
                 models("naive", "exp", "linear", "arima");
             }
 
-            // Обработка авто-ARIMA
             if (autoArimaRequested) {
                 ArimaModel auto = null;
                 try {
@@ -103,7 +102,6 @@ public class Jtsml {
                 autoArimaRequested = false;
             }
 
-            // Обработка авто-SARIMA
             if (autoSarimaRequested && data != null) {
                 try {
                     SARIMAModel autoSarima = AutoSARIMA.findBest(

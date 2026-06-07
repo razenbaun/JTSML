@@ -6,10 +6,10 @@ import java.util.List;
 public class CorrelationUtils {
 
     /**
-     * Вычисляет автокорреляцию (ACF) для данного ряда.
-     * @param data   временной ряд
-     * @param maxLag максимальный лаг
-     * @return массив значений ACF длины maxLag+1 (индекс 0 = 1.0)
+     * Computes autocorrelation (ACF) for the given series.
+     * @param data   time series
+     * @param maxLag maximum lag
+     * @return array of ACF values of length maxLag+1 (index 0 = 1.0)
      */
     public static double[] acf(List<Double> data, int maxLag) {
         int n = data.size();
@@ -17,7 +17,7 @@ public class CorrelationUtils {
         double[] result = new double[maxLag + 1];
         result[0] = 1.0;
 
-        // вычисляем дисперсию (знаменатель для ACF)
+        // compute variance (denominator for ACF)
         double variance = 0.0;
         for (double v : data) variance += (v - mean) * (v - mean);
 
@@ -32,10 +32,10 @@ public class CorrelationUtils {
     }
 
     /**
-     * Вычисляет частную автокорреляцию (PACF) с помощью рекурсии Дурбина-Левинсона.
-     * @param data   временной ряд
-     * @param maxLag максимальный лаг
-     * @return массив значений PACF длины maxLag+1 (индекс 0 = 1.0)
+     * Computes partial autocorrelation (PACF) using Durbin-Levinson recursion.
+     * @param data   time series
+     * @param maxLag maximum lag
+     * @return array of PACF values of length maxLag+1 (index 0 = 1.0)
      */
     public static double[] pacf(List<Double> data, int maxLag) {
         int n = data.size();
@@ -58,7 +58,7 @@ public class CorrelationUtils {
             }
             phi[k] = numerator / denominator;
 
-            // обновляем phi[1..k-1]
+            // update phi[1..k-1]
             double[] phiOld = new double[k];
             System.arraycopy(phi, 0, phiOld, 0, k);
             for (int j = 1; j < k; j++) {

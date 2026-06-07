@@ -43,7 +43,7 @@ public class ArimaModel implements TimeSeriesModel, Serializable {
         lastErrors = optimizer.getLastErrors();
         int tailSize = Math.max(Math.max(p, q), 1);
         lastDiffObs = new ArrayList<>(diff.subList(diff.size() - tailSize, diff.size()));
-        // Хвост исходного ряда нужен только при d > 0
+        // Tail of the original series is needed only when d > 0
         originalTail = (d > 0) ? new ArrayList<>(trainData.subList(trainData.size() - d, trainData.size())) : new ArrayList<>();
         nobs = diff.size();
     }
@@ -68,11 +68,11 @@ public class ArimaModel implements TimeSeriesModel, Serializable {
             workDiff.add(pred);
             workErrors.add(0.0);
         }
-        // Если d == 0, разностей нет, прогноз сразу в уровнях
+        // If d == 0, no differences, forecast is directly on levels
         if (d == 0) {
             return diffForecast;
         }
-        // Интегрируем обратно
+        // Integrate back
         List<Double> result = new ArrayList<>();
         List<Double> orig = new ArrayList<>(originalTail);
         for (double dVal : diffForecast) {
@@ -84,9 +84,9 @@ public class ArimaModel implements TimeSeriesModel, Serializable {
         return result;
     }
 
-    // AICc: AIC + 2k(k+1)/(n-k-1), n = nobs, k = количество параметров
+    // AICc: AIC + 2k(k+1)/(n-k-1), n = nobs, k = number of parameters
     public double getAICc() {
-        int k = p + q + 1 + (d > 0 ? 1 : 0); // d считается одним параметром (порядок)
+        int k = p + q + 1 + (d > 0 ? 1 : 0); // d is counted as one parameter (order)
         if (nobs - k - 1 <= 0) return Double.POSITIVE_INFINITY;
         double aic = nobs * Math.log(sigma2) + 2 * k;
         return aic + (2.0 * k * (k + 1)) / (nobs - k - 1.0);

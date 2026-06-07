@@ -10,6 +10,33 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
+    <name>JTSML</name>
+    <description>Java Time Series Machine Learning Library - forecasting, ARIMA, SARIMA, exponential smoothing, Prophet adapter, hyperparameter optimization and visualization</description>
+    <url>https://github.com/razenbaun/JTSML</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Alexander Petrachkov</name>
+            <email>alexandrpetrachkov017@gmail.com</email>
+            <organization>io.github.razenbaun</organization>
+            <organizationUrl>https://github.com/razenbaun</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/razenbaun/JTSML.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/razenbaun/JTSML.git</developerConnection>
+        <url>https://github.com/razenbaun/JTSML/tree/main</url>
+    </scm>
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -53,6 +80,34 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.1.2</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

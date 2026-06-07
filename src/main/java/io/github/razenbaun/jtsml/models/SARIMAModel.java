@@ -12,8 +12,8 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
     private double intercept;
     private double sigma2;
     private LinkedList<Double> lastErrors;
-    private List<Double> lastDiffObs;    // последние значения разностного ряда
-    private List<Double> lastLevels;     // последние значения исходного ряда (для интегрирования)
+    private List<Double> lastDiffObs;    // last values of the differenced series
+    private List<Double> lastLevels;     // last values of the original series (for integration)
     private int maxArLag;
     private int maxMaLag;
     private int[] arLags;
@@ -30,7 +30,6 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
     public void fit(List<Double> trainData) {
         List<Double> transformed = new ArrayList<>(trainData);
 
-        // Сезонное дифференцирование
         for (int i = 0; i < D; i++) {
             List<Double> tmp = new ArrayList<>();
             for (int j = s; j < transformed.size(); j++) {
@@ -38,7 +37,6 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
             }
             transformed = tmp;
         }
-        // Обычное дифференцирование
         for (int i = 0; i < d; i++) {
             List<Double> tmp = new ArrayList<>();
             for (int j = 1; j < transformed.size(); j++) {
@@ -47,7 +45,6 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
             transformed = tmp;
         }
 
-        // Формируем лаги
         List<Integer> arLagList = new ArrayList<>();
         for (int i = 1; i <= p; i++) arLagList.add(i);
         for (int i = 1; i <= P; i++) arLagList.add(i * s);
@@ -75,10 +72,8 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
         sigma2 = optimizer.getSigma2();
         lastErrors = optimizer.getLastErrors();
 
-        // Храним последние maxLag значений разностного ряда
         lastDiffObs = new ArrayList<>(transformed.subList(transformed.size() - maxLag, transformed.size()));
 
-        // Храним последние (d + s*D) значений исходного ряда для интегрирования
         int needTail = d + s * D;
         lastLevels = new ArrayList<>(trainData.subList(trainData.size() - needTail, trainData.size()));
         nobs = y.length;
@@ -86,19 +81,19 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
 
     @Override
     public List<Double> predict(int horizon) {
-        // Рекурсивный прогноз разностного ряда
+        // Recursive forecast of the differenced series
         LinkedList<Double> workDiff = new LinkedList<>(lastDiffObs);
         LinkedList<Double> workErrors = new LinkedList<>(lastErrors);
         List<Double> diffForecast = new ArrayList<>();
 
         for (int h = 0; h < horizon; h++) {
             double pred = intercept;
-            // AR часть
+            // AR part
             for (int i = 0; i < arLags.length; i++) {
                 int idx = workDiff.size() - arLags[i];
                 if (idx >= 0) pred += arCoeffs[i] * workDiff.get(idx);
             }
-            // MA часть
+            // MA part
             for (int i = 0; i < maLags.length; i++) {
                 int lag = maLags[i];
                 if (workErrors.size() >= lag) {
@@ -107,17 +102,17 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
             }
             diffForecast.add(pred);
             workDiff.add(pred);
-            workErrors.add(0.0); // будущие ошибки = 0
+            workErrors.add(0.0); // future errors = 0
         }
 
-        // Интегрирование разностного ряда обратно в уровни
-        // Используем стандартный алгоритм последовательного интегрирования
+        // Integrate the differenced series back to levels
+        // Standard sequential integration algorithm
         List<Double> levels = new ArrayList<>(lastLevels);
         for (double dVal : diffForecast) {
-            levels.add(dVal); // временно добавляем разность
+            levels.add(dVal); // temporarily add the difference
         }
 
-        // d-кратное интегрирование (шаг 1)
+        // d-fold integration (step 1)
         for (int k = 0; k < d; k++) {
             for (int i = d + s * D; i < levels.size(); i++) {
                 double prev = levels.get(i - 1);
@@ -125,7 +120,7 @@ public class SARIMAModel implements TimeSeriesModel, Serializable {
             }
         }
 
-        // D-кратное сезонное интегрирование (шаг s)
+        // D-fold seasonal integration (step s)
         for (int k = 0; k < D; k++) {
             for (int i = d + s * D; i < levels.size(); i++) {
                 double prev = levels.get(i - s);

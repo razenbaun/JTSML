@@ -30,7 +30,7 @@ public class ProphetAdapter implements TimeSeriesModel, Serializable {
             Path trainFile = Files.createTempFile("prophet_train_", ".csv");
             Path forecastFile = Files.createTempFile("prophet_forecast_", ".csv");
 
-            // Записываем обучающие данные с точкой (Locale.US)
+            // Write training data using dot as decimal separator (Locale.US)
             try (PrintWriter pw = new PrintWriter(Files.newBufferedWriter(trainFile))) {
                 pw.println("ds,y");
                 for (int i = 0; i < trainData.size(); i++) {
@@ -38,7 +38,6 @@ public class ProphetAdapter implements TimeSeriesModel, Serializable {
                 }
             }
 
-            // Команда
             List<String> command = new ArrayList<>();
             command.add(pythonPath);
             command.add(scriptPath);
@@ -55,10 +54,9 @@ public class ProphetAdapter implements TimeSeriesModel, Serializable {
                 throw new RuntimeException("Prophet script failed: " + output);
             }
 
-            // Читаем прогноз
             List<Double> forecast = new ArrayList<>();
             try (BufferedReader br = Files.newBufferedReader(forecastFile)) {
-                br.readLine(); // заголовок
+                br.readLine();
                 String line;
                 while ((line = br.readLine()) != null) {
                     String[] parts = line.split(",");

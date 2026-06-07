@@ -8,10 +8,10 @@ import java.util.List;
 
 public class LinearTrendModel implements TimeSeriesModel, Serializable {
     private static final long serialVersionUID = 1L;
-    private transient SimpleRegression regression; // не сериализуем
+    private transient SimpleRegression regression; // not serializable
     private double slope;
     private double intercept;
-    private double n; // количество точек
+    private double n; // number of points
     private final String name = "LinearTrend";
 
     @Override
@@ -39,9 +39,9 @@ public class LinearTrendModel implements TimeSeriesModel, Serializable {
     @Override
     public String getName() { return name; }
 
-    // Восстановление regression после десериализации не требуется, т.к. predict не использует его
+    // No need to restore regression after deserialization because predict does not use it
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
         in.defaultReadObject();
-        // regression можно не восстанавливать – он не используется в predict
+        // regression can be skipped – it is not used in predict
     }
 }

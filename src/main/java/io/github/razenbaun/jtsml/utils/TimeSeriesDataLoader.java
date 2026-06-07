@@ -11,30 +11,29 @@ import java.util.List;
 public class TimeSeriesDataLoader {
 
     /**
-     * Загружает временной ряд, автоматически определяя кодировку.
-     * Сначала пробует UTF-8, при ошибке – Windows-1251.
+     * Loads a time series, automatically detecting encoding.
+     * First tries UTF-8, on failure – Windows-1251.
      */
     public static List<Double> loadFromCSV(String filePath, int valueColumnIndex) throws IOException {
         try {
             return loadFromCSV(filePath, valueColumnIndex, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            // Пробуем Windows-1251 (ANSI для русских окон)
             return loadFromCSV(filePath, valueColumnIndex, Charset.forName("windows-1251"));
         }
     }
 
     public static List<Double> loadFromCSV(String filePath, int valueColumnIndex, Charset charset) throws IOException {
         Path path = Path.of(filePath);
-        // Читаем все байты и преобразуем в строку в нужной кодировке
+        // Read all bytes and convert to string using the given encoding
         byte[] bytes = Files.readAllBytes(path);
         String content = new String(bytes, charset);
 
-        // Удаляем BOM (если есть)
+        // Remove BOM (if present)
         if (content.startsWith("\uFEFF")) {
             content = content.substring(1);
         }
 
-        // Определяем разделитель
+        // Determine delimiter
         char delimiter = content.contains(";") ? ';' : ',';
 
         String[] lines = content.split("\\r?\\n");
@@ -44,7 +43,7 @@ public class TimeSeriesDataLoader {
         for (String line : lines) {
             if (line.isBlank()) continue;
 
-            // Пропускаем строки, не содержащие цифр (заголовки)
+            // Skip lines that do not contain digits (headers)
             if (!headerSkipped && !line.matches(".*\\d+.*")) {
                 headerSkipped = true;
                 continue;

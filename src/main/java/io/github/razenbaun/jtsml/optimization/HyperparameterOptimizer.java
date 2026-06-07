@@ -42,7 +42,7 @@ public class HyperparameterOptimizer {
                     bestModel = model;
                 }
             } catch (Exception e) {
-                // пропускаем неудачную комбинацию
+                // skip
             }
         }
         if (bestModel == null) {

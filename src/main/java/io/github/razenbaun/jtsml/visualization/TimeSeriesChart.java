@@ -13,11 +13,11 @@ import java.util.List;
 public class TimeSeriesChart {
 
     /**
-     * Отображает график временного ряда с несколькими сериями.
-     * @param title      заголовок окна
-     * @param xLabel     подпись оси X
-     * @param yLabel     подпись оси Y
-     * @param series     пары "название – данные" (x — индекс, y — значение)
+     * Displays a time series chart with multiple series.
+     * @param title      window title
+     * @param xLabel     X-axis label
+     * @param yLabel     Y-axis label
+     * @param series     pairs of "name – data" (x — index, y — value)
      */
     @SafeVarargs
     public static void display(String title, String xLabel, String yLabel,
@@ -42,7 +42,7 @@ public class TimeSeriesChart {
     }
 
     /**
-     * Простейший вспомогательный класс для хранения пары "название–данные".
+     * Simple helper class for storing a "name–data" pair.
      */
     public static class Pair<L, R> {
         public final L label;

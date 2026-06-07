@@ -15,11 +15,11 @@ import java.awt.*;
 public class CorrelogramChart {
 
     /**
-     * Отображает столбчатые коррелограммы для ACF и PACF.
-     * @param title   заголовок окна
-     * @param lags    массив лагов (начиная с 0)
-     * @param acf     массив значений ACF
-     * @param pacf    массив значений PACF
+     * Displays bar correlograms for ACF and PACF.
+     * @param title   window title
+     * @param lags    array of lags (starting from 0)
+     * @param acf     array of ACF values
+     * @param pacf    array of PACF values
      */
     public static void display(String title, int[] lags, double[] acf, double[] pacf) {
         JFreeChart chart = createCorrelogramChart(title, lags, acf, pacf);

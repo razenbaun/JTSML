@@ -5,16 +5,16 @@ import java.util.*;
 public class AutoSARIMA {
 
     /**
-     * Ищет лучшую SARIMA модель с заданным сезонным периодом.
-     * @param data       временной ряд
-     * @param maxP       максимальный несезонный AR порядок
-     * @param maxD       максимальный несезонный I порядок
-     * @param maxQ       максимальный несезонный MA порядок
-     * @param maxSeasonalP   максимальный сезонный AR порядок
-     * @param maxSeasonalD   максимальный сезонный I порядок
-     * @param maxSeasonalQ   максимальный сезонный MA порядок
-     * @param s           сезонный период (7 для дней, 12 для месяцев и т.д.)
-     * @return           лучшая модель или null, если ни одна не подошла
+     * Finds the best SARIMA model with the given seasonal period.
+     * @param data           time series data
+     * @param maxP           maximum non‑seasonal AR order
+     * @param maxD           maximum non‑seasonal I order
+     * @param maxQ           maximum non‑seasonal MA order
+     * @param maxSeasonalP   maximum seasonal AR order
+     * @param maxSeasonalD   maximum seasonal I order
+     * @param maxSeasonalQ   maximum seasonal MA order
+     * @param s              seasonal period (7 for daily, 12 for monthly, etc.)
+     * @return               the best model, or null if none converged
      */
     public static SARIMAModel findBest(List<Double> data,
                                        int maxP, int maxD, int maxQ,
@@ -39,7 +39,7 @@ public class AutoSARIMA {
                                         bestModel = model;
                                     }
                                 } catch (Exception e) {
-                                    // Пропускаем неудачные комбинации
+                                    // skip
                                 }
                             }
                         }

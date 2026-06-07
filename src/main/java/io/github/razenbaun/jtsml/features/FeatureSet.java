@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Набор признаков и целевая переменная.
+ * Feature set and target variable.
  */
 public class FeatureSet {
     private final double[][] features;  // [rows][features]

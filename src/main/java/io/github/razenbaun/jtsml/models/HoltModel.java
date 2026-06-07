@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Модель Хольта (двойное экспоненциальное сглаживание) – учитывает тренд.
- * Параметры: alpha – сглаживание уровня, beta – сглаживание тренда.
+ * Holt's model (double exponential smoothing) – accounts for trend.
+ * Parameters: alpha – level smoothing, beta – trend smoothing.
  */
 public class HoltModel implements TimeSeriesModel, Serializable {
     private static final long serialVersionUID = 1L;
